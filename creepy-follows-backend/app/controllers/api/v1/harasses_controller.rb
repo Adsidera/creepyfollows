@@ -1,6 +1,7 @@
 module Api::V1
   class HarassesController < ApplicationController
     before_action :set_harass, only: [:update, :show, :edit]
+
     def index
       @harasses = Harass.all
       render json: @harasses
@@ -16,16 +17,21 @@ module Api::V1
 
     def create
       @harass = Harass.new(harass_params)
-      if @harass.create
-        render json: @harass
+      if @harass.save
+        render json: @harass, status: "Created"
       else
-        head: :no_content, status: :unprocessable_entity
+        render json: @harass.errors, status: :unprocessable_entity
       end
     end
 
     def update
-      @harass.
+      if @harass.update(harasss_params)
+        render json: @harass, status: "Updated"
+      else
+        render json: @harass.errors, status: :unprocessable_entity
+      end
     end
+
     private
       def set_harass
         @harass ||= Harass.fin(params[:id])
